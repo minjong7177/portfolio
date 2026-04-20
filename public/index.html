@@ -2,16 +2,35 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JAY Portfolio</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>JAY</h1>
-<p id="job">Loading...</p>
+<div class="container">
 
-<h2>Skills</h2>
-<ul id="skills"></ul>
+    <header>
+        <h1>JAY</h1>
+        <p id="job">Loading...</p>
+    </header>
+
+    <section class="card">
+        <h2>👨‍💻 About</h2>
+        <p>소프트웨어 개발자 포트폴리오입니다.</p>
+    </section>
+
+    <section class="card">
+        <h2>🚀 Skills</h2>
+        <div id="skills" class="skills"></div>
+    </section>
+
+    <section class="card">
+        <h2>📡 API Status</h2>
+        <p id="status">Checking...</p>
+    </section>
+
+</div>
 
 <script src="script.js"></script>
 </body>
