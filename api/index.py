@@ -4,44 +4,50 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-# 임시 저장소 (서버 재시작하면 초기화됨)
+# 메모리 저장소 (Vercel은 서버리스라 DB 연동 권장)
 projects = [
-    {
-        "id": 1,
-        "title": "Stock Analyzer",
-        "desc": "주식 분석 웹 서비스"
-    }
+    {"id": 1, "title": "Stock Analyzer", "desc": "주식 분석 웹 서비스"},
+    {"id": 2, "title": "JAY Portfolio", "desc": "Flask + Vercel 포트폴리오 사이트"},
 ]
 
-# ✅ 전체 조회
+next_id = {"value": 3}  # mutable으로 관리
+
+
 @app.route("/api/projects", methods=["GET"])
 def get_projects():
     return jsonify(projects)
 
-# ✅ 추가
+
 @app.route("/api/projects", methods=["POST"])
 def add_project():
     data = request.json
+    if not data or not data.get("title") or not data.get("desc"):
+        return jsonify({"error": "title과 desc는 필수입니다."}), 400
+
     new_project = {
-        "id": len(projects) + 1,
-        "title": data.get("title"),
-        "desc": data.get("desc")
+        "id": next_id["value"],
+        "title": data["title"],
+        "desc": data["desc"],
     }
     projects.append(new_project)
-    return jsonify({"message": "추가 완료", "data": new_project})
+    next_id["value"] += 1
+    return jsonify({"message": "추가 완료", "data": new_project}), 201
 
-# ✅ 삭제
-@app.route("/api/projects/<int:id>", methods=["DELETE"])
-def delete_project(id):
+
+@app.route("/api/projects/<int:project_id>", methods=["DELETE"])
+def delete_project(project_id):
     global projects
-    projects = [p for p in projects if p["id"] != id]
+    before = len(projects)
+    projects = [p for p in projects if p["id"] != project_id]
+    if len(projects) == before:
+        return jsonify({"error": "프로젝트를 찾을 수 없습니다."}), 404
     return jsonify({"message": "삭제 완료"})
 
-# 상태 확인
+
 @app.route("/")
 def home():
-    return jsonify({"status": "running"})
+    return app.send_static_file("index.html")
 
-# Vercel handler
-def handler(request, response):
-    return app(request.environ, response.start_response)
+
+# Vercel serverless entry point
+app = app
