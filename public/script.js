@@ -1,21 +1,45 @@
-async function loadProfile() {
-    try {
-        const res = await fetch("/api/profile");
-        const data = await res.json();
+async function loadProjects() {
+    const res = await fetch("/api/projects");
+    const data = await res.json();
 
-        document.getElementById("job").innerText = data.job;
+    const list = document.getElementById("list");
+    list.innerHTML = "";
 
-        const skillsDiv = document.getElementById("skills");
-        data.skills.forEach(skill => {
-            const span = document.createElement("span");
-            span.innerText = skill;
-            skillsDiv.appendChild(span);
-        });
+    data.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "card";
 
-        document.getElementById("status").innerText = "✅ API Connected";
-    } catch (err) {
-        document.getElementById("status").innerText = "❌ API Error";
-    }
+        div.innerHTML = `
+            <h3>${p.title}</h3>
+            <p>${p.desc}</p>
+            <button onclick="deleteProject(${p.id})">삭제</button>
+        `;
+
+        list.appendChild(div);
+    });
 }
 
-loadProfile();
+async function addProject() {
+    const title = document.getElementById("title").value;
+    const desc = document.getElementById("desc").value;
+
+    await fetch("/api/projects", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ title, desc })
+    });
+
+    loadProjects();
+}
+
+async function deleteProject(id) {
+    await fetch(`/api/projects/${id}`, {
+        method: "DELETE"
+    });
+
+    loadProjects();
+}
+
+loadProjects();
