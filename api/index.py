@@ -4,9 +4,13 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
+# ✅ 여기!
 @app.route("/")
 def home():
-    return "Flask API is running!"
+    return jsonify({
+        "message": "Welcome to JAY API 🚀",
+        "status": "running"
+    })
 
 @app.route("/api/profile")
 def profile():
@@ -16,6 +20,6 @@ def profile():
         "skills": ["Python", "Flask", "JavaScript"]
     })
 
-# Vercel용 handler
+# Vercel serverless handler
 def handler(request, response):
     return app(request.environ, response.start_response)
