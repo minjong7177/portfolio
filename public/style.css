@@ -1,1 +1,9 @@
+body {
+    font-family: sans-serif;
+    text-align: center;
+    background: #e0f2fe;
+}
 
+h1 {
+    font-size: 40px;
+}
